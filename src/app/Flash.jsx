@@ -21,6 +21,8 @@ import zadigCreateNewDevice from '../assets/zadig_create_new_device.png'
 import zadigForm from '../assets/zadig_form.png'
 import comma3XProduct from '../assets/comma3X.webp'
 import comma4Product from '../assets/four_screen_on.webp'
+import walkthroughVideo from '../assets/flash-walkthrough.mp4'
+import walkthroughPoster from '../assets/flash-walkthrough-poster.webp'
 
 // All images that need to be preloaded
 const preloadImages = [
@@ -36,6 +38,57 @@ function ImagePreloader() {
       {preloadImages.map((src) => (
         <img key={src} src={src} alt="" />
       ))}
+    </div>
+  )
+}
+
+function PlayIcon({ className }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M8 5.14v13.72a1 1 0 0 0 1.5.87l11.88-6.86a1 1 0 0 0 0-1.74L9.5 4.27A1 1 0 0 0 8 5.14Z" />
+    </svg>
+  )
+}
+
+function WalkthroughModal({ onClose }) {
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') onClose()
+    }
+
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [onClose])
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-4"
+      role="dialog"
+      aria-modal="true"
+      aria-label="flash.comma.ai walkthrough video"
+      onClick={onClose}
+    >
+      <div className="relative w-full max-w-5xl overflow-hidden rounded-lg bg-black shadow-2xl" onClick={(event) => event.stopPropagation()}>
+        <button
+          type="button"
+          onClick={onClose}
+          className="absolute right-3 top-3 z-10 rounded-full bg-black/70 p-2 text-white transition-colors hover:bg-black"
+          aria-label="Close walkthrough video"
+          title="Close"
+        >
+          <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+        <video
+          src={walkthroughVideo}
+          poster={walkthroughPoster}
+          className="aspect-video w-full"
+          controls
+          playsInline
+          preload="metadata"
+        />
+      </div>
     </div>
   )
 }
@@ -344,6 +397,8 @@ function Stepper({ steps, currentStep, onStepClick }) {
 
 // Landing page component
 function LandingPage({ onStart }) {
+  const [showWalkthrough, setShowWalkthrough] = useState(false)
+
   return (
     <div className="wizard-screen flex flex-col items-center justify-center h-full gap-8 p-8">
       <img src={comma} alt="comma" width={80} height={80} />
@@ -353,12 +408,23 @@ function LandingPage({ onStart }) {
           Restore your comma device to a fresh factory state
         </p>
       </div>
-      <button
-        onClick={onStart}
-        className="px-12 py-4 text-2xl font-semibold rounded-full bg-[#51ff00] hover:bg-[#45e000] active:bg-[#3acc00] text-black transition-colors"
-      >
-        Start
-      </button>
+      <div className="flex flex-col items-center gap-3">
+        <button
+          onClick={onStart}
+          className="px-12 py-4 text-2xl font-semibold rounded-full bg-[#51ff00] hover:bg-[#45e000] active:bg-[#3acc00] text-black transition-colors"
+        >
+          Start
+        </button>
+        <button
+          type="button"
+          onClick={() => setShowWalkthrough(true)}
+          className="flex items-center gap-2 rounded-full border border-gray-300 bg-white px-6 py-3 text-base font-semibold text-gray-700 transition-colors hover:border-gray-400 hover:bg-gray-50"
+        >
+          <PlayIcon className="h-4 w-4" />
+          Watch walkthrough
+        </button>
+      </div>
+      {showWalkthrough && <WalkthroughModal onClose={() => setShowWalkthrough(false)} />}
     </div>
   )
 }

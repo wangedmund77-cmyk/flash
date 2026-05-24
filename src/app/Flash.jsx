@@ -83,6 +83,7 @@ function WalkthroughModal({ onClose }) {
         <video
           src={walkthroughVideo}
           poster={walkthroughPoster}
+          title="flash.comma.ai walkthrough video"
           className="aspect-video w-full"
           controls
           playsInline

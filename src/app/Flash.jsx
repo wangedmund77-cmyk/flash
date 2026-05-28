@@ -51,12 +51,15 @@ function PlayIcon({ className }) {
 }
 
 function WalkthroughModal({ onClose }) {
+  const closeButtonRef = useRef(null)
+
   useEffect(() => {
     const handleKeyDown = (event) => {
       if (event.key === 'Escape') onClose()
     }
 
     document.addEventListener('keydown', handleKeyDown)
+    closeButtonRef.current?.focus()
     return () => document.removeEventListener('keydown', handleKeyDown)
   }, [onClose])
 
@@ -70,6 +73,7 @@ function WalkthroughModal({ onClose }) {
     >
       <div className="relative w-full max-w-5xl overflow-hidden rounded-lg bg-black shadow-2xl" onClick={(event) => event.stopPropagation()}>
         <button
+          ref={closeButtonRef}
           type="button"
           onClick={onClose}
           className="absolute right-3 top-3 z-10 rounded-full bg-black/70 p-2 text-white transition-colors hover:bg-black"
